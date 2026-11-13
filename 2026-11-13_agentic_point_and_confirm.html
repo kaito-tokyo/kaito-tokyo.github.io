@@ -3394,15 +3394,39 @@
       <button class="nav" id="navL" type="button" aria-label="前のページ">
         ‹</button
       ><button class="nav" id="navR" type="button" aria-label="次のページ">
-        ›</button
-      ><button
+        ›
+      </button>
+      <div
+        id="slrem"
+        aria-live="off"
+        title="このスライドが表示される残り秒数"
+        style="
+          position: absolute;
+          right: calc(28 * var(--u));
+          top: calc(20 * var(--u));
+          min-width: calc(150 * var(--u));
+          text-align: right;
+          white-space: nowrap;
+          font-size: calc(30 * var(--u));
+          font-weight: 700;
+          font-variant-numeric: tabular-nums;
+          color: var(--accent);
+          font-family:
+            &quot;Hiragino Sans&quot;, &quot;Hiragino Kaku Gothic ProN&quot;,
+            &quot;Noto Sans JP&quot;, &quot;Yu Gothic&quot;, &quot;Meiryo&quot;,
+            Arial, sans-serif;
+          z-index: 4;
+          pointer-events: none;
+        "
+      ></div>
+      <button
         id="cr"
         type="button"
         aria-haspopup="dialog"
         title="権利表示を開く"
         style="
           position: absolute;
-          right: calc(56 * var(--u));
+          right: calc(210 * var(--u));
           top: calc(28 * var(--u));
           width: auto;
           white-space: nowrap;
@@ -3665,6 +3689,7 @@
           }),
           starts = [],
           acc = 0;
+        var slremEl = document.getElementById("slrem");
         durs.forEach(function (d) {
           starts.push(acc);
           acc += d;
@@ -4170,6 +4195,16 @@
           prevRem = rem;
           tmTx.textContent =
             Math.floor(rem / 60) + ":" + ("0" + (rem % 60)).slice(-2);
+          /* UI バー右上：いまのスライドが表示される残り秒数（発表前はそのスライドの持ち時間、終了後は空） */
+          var sr =
+            STATE === "end" || !durs[i]
+              ? ""
+              : String(
+                  STATE === "pre"
+                    ? Math.round(durs[i] / 1000)
+                    : Math.max(0, Math.ceil((starts[i] + durs[i] - e) / 1000)),
+                );
+          if (slremEl.textContent !== sr) slremEl.textContent = sr;
           band.classList.toggle("pre", STATE === "pre");
           band.classList.toggle("end", STATE === "end");
           band.classList.toggle(
